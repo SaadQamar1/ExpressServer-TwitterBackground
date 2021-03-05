@@ -5,7 +5,6 @@ app.set('view engine', 'express')
 app.set('view engine' , 'ejs')
 const port = 3000;
 app.use(express.urlencoded({extended: true}))
-const movies = require("./movie-data.json")
 const flash = require('express-flash')
 app.use(express.json());
 const bcrypt = require('bcrypt')
