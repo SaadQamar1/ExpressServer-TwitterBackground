@@ -24,6 +24,8 @@ var Message = mongoose.model('Message',{
 
 var dbUrl = 'mongodb://username:password@ds257981.mlab.com:57981/simple-chat'
 
+
+//Getting and sending messages
 app.get('/messages', (req, res) => {
   Message.find({},(err, messages)=> {
     res.send(messages);
@@ -49,6 +51,7 @@ app.post('/messages', (req, res) => {
 
 app.use(flash())
 
+//Using passport to provide each user with an id
 const giveInitialpassport = require('./extensionPassport');
 const { response } = require('express');
 giveInitialpassport(
@@ -74,8 +77,7 @@ app.use(session({
 
 app.use(passport.initialize())
 app.use(passport.session())
-
-//app.get('/signup', signpage)
+//Getting and osting all functions displayed in the server
 app.get('/forgotPass1', forgotPass1)
 app.get('/login', login)
 app.get('/allUserExamples/:userID', user1)
@@ -94,6 +96,8 @@ app.use('/', function(req, res, next) {
     next()
 })
 
+
+//Signing up and using bcrypt to provide an encrypted password
 app.get('/signUp', ensureNotAuthenticated, (req,res) => {
     res.render('signUp.html')
 })
@@ -120,6 +124,8 @@ app.post('/signUp', ensureNotAuthenticated, async (req, res) => {
     console.log('a user is connected')
   })
   
+
+//Using mongoose to send messages between two users
   mongoose.connect(dbUrl ,{useMongoClient : true} ,(err) => {
     console.log('mongodb connected',err);
   })
@@ -243,6 +249,8 @@ app.get('/', ensureAuthentication, (req, res) => {
     res.render('mainPage.html', { name: req.user.username })
 })
 
+
+//This function is used to search for a user from the list of users created
 function searchUser(req, res){
     console.log("Searching for Contributing User...");
     let userChosen = req.body.userChosen;
@@ -260,6 +268,8 @@ function searchUser(req, res){
     }
 }
 
+
+//Function to ensure authentification is accepted to be redirected to the login page
 function ensureAuthentication(req, res, next) {
     if (req.isAuthenticated()) {
         return next()
@@ -274,6 +284,8 @@ function ensureNotAuthenticated(req, res, next) {
     next()
 }
 
+
+//Allowing a user to post a tweet
 router.post('/signedUpUsers/:user/tweets', (req, res) => {
     const userAccount = db[req.params.user];
     // Check if userAccount exists
@@ -312,6 +324,7 @@ router.post('/signedUpUsers/:user/tweets', (req, res) => {
   });
   
 
+//Allowing a user to delete a tweet
 router.tweetDelete('/signedUpUsers/:user/tweets/:id', (req, res) => {
     const userAccount = db[req.params.user];
     // Check if userAccount exists
@@ -330,6 +343,7 @@ router.tweetDelete('/signedUpUsers/:user/tweets/:id', (req, res) => {
     res.sendStatus(204);
   });
 
+//Function allows users to login their account if information entered is right
 function login(req, res, next){
     if(req.session.loggedin){
         res.redirect('/alreadyloggedin.html');
@@ -357,6 +371,8 @@ function login(req, res, next){
     }
 }
 
+
+//Function used if password is forgotten by the user
 function forgotPass1(req, res) {
     req.session.destroy();
     res.redirect('/forgotpasswordsuccess.html');
@@ -385,6 +401,7 @@ function user1(req , res){
     })
 }
 
+//Allows a user to log out but still stay on the website
 function LoggingOut(req, res){
     if(req.session.loggedin == true) {
         req.session.destroy();
